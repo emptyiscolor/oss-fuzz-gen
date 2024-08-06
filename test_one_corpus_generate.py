@@ -4,9 +4,12 @@ import logging
 import os
 import re
 import shutil
+import time
+import argparse
 from typing import Optional
 from llm_toolkit import corpus_generator
 from experiment.benchmark import Benchmark
+
 
 OSS_FUZZ_DIR = os.getenv("OSS_FUZZ_DIR", "/tmp/")
 BENCHMARK_DIR = os.path.join(os.getcwd(), "benchmark-seedgen")
@@ -46,6 +49,16 @@ dns_message_createpools(isc_mem_t *mctx, isc_mempool_t **namepoolp,
 # )
 
 
+def timeit(func):
+    def wrapper(*args, **kwargs):
+        start = time.time()
+        result = func(*args, **kwargs)
+        end = time.time()
+        print(f"{func.__name__} took {end - start} seconds")
+        return result
+    return wrapper
+
+
 def extend_build_with_seed_gen(ai_binary, benchmark: Benchmark, target_path: str,
                                oss_fuzz_project_name: str):
     """Extends an OSS-Fuzz project with corpus generated programmatically."""
@@ -78,8 +91,25 @@ def extend_build_with_seed_gen(ai_binary, benchmark: Benchmark, target_path: str
 def call_single_seed_gen(ai_binary: str, model_name, target_harness_path, project_name, target_func_src):
     generated_script = corpus_generator.get_single_script(
         ai_binary, model_name, target_harness_path, project_name, target_func_src)
-    print("Generated script:")
-    print(generated_script)
+    print("Generated.")
+    return generated_script
+
+
+def log_to_file(log_file: str, message: str):
+    with open(log_file, "a") as f:
+        f.write(message + "\n")
+
+
+def save_single_script(project_name, harness_name, generated_script):
+    script_folder = os.path.join(BENCHMARK_DIR, project_name)
+    script_path = os.path.join(
+        BENCHMARK_DIR, project_name, "gen____" + harness_name + ".py")
+    if not os.path.exists(script_folder):
+        os.makedirs(script_folder)
+
+    with open(script_path, "w") as f:
+        f.write(generated_script)
+    print("Saved to ", script_path)
 
 
 def test_one():
@@ -93,5 +123,32 @@ def test_one():
                          target_harness_path, project_name, target_func_src)
 
 
+def main():
+    """
+    argv[1]: target_harness_path
+    argv[2]: project_name
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("project_name", type=str)
+    parser.add_argument("target_harness_path", type=str)
+    args = parser.parse_args()
+    ai_binary = ""
+    model_name = "gpt-4o"
+    log_file = "/tmp/metrics_gen_ai_generator.log"
+    project_name = args.project_name
+    target_harness_path = args.target_harness_path
+    harness_filename = os.path.basename(target_harness_path)
+    target_func_src = ""
+    print("Start generating base on ", target_harness_path)
+    start = time.time()
+    generated_script = call_single_seed_gen(ai_binary, model_name,
+                                            target_harness_path, project_name, target_func_src)
+    end = time.time()
+    time_consume = end - start
+    save_single_script(project_name, harness_filename, generated_script)
+    log_text = f"{project_name},{harness_filename},{time_consume}"
+    log_to_file(log_file, log_text)
+
+
 if __name__ == "__main__":
-    test_one()
+    main()

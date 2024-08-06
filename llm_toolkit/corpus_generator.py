@@ -109,10 +109,17 @@ def get_single_script(
   )
 
   # Get the corpus generation template
-  with open(
-      os.path.join(prompt_builder.DEFAULT_TEMPLATE_DIR,
-                   'corpus_generation_via_python_script.txt'), 'r') as f:
-    prompt_to_query = f.read()
+  if not target_func_src == "":
+    with open(
+        os.path.join(prompt_builder.DEFAULT_TEMPLATE_DIR,
+                    'corpus_generation_via_python_script.txt'), 'r') as f:
+      prompt_to_query = f.read()
+  else:
+    with open(
+        os.path.join(prompt_builder.DEFAULT_TEMPLATE_DIR,
+                    'corpus_generation_via_python_script_lv1.txt'), 'r') as f:
+      prompt_to_query = f.read()
+  
   with open(target_harness_path) as target_harness_file:
     target_harness_code = target_harness_file.read()
 
