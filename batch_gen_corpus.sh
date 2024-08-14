@@ -53,13 +53,13 @@ function run_batch_seedgen_scripts() {
       echo "cp -f $BENCHMARK_OSS_SEEDS_DIR/save_ai_corpus.sh ./build/work/$project/"
       cp -f $BENCHMARK_OSS_SEEDS_DIR/save_ai_corpus.sh ./build/work/$project/ && \
       mkdir -p ./build/work/$project/corpus && \
-      cp -f $BENCHMARK_OSS_SEEDS_DIR/benchmark-seedgen/$project/*.py ./build/work/$project/corpus && \
+      cp -f $BENCHMARK_OSS_SEEDS_DIR/benchmark-seedgen/$project/*.py ./build/work/$project/ && \
       docker run --rm --privileged --shm-size=2g --platform linux/amd64 -e FUZZING_ENGINE=libfuzzer -e SANITIZER=address -e ARCHITECTURE=x86_64 -e HELPER=True -e FUZZING_LANGUAGE=c++ -v "/mydata/data/code/fuzzing/oss-fuzz/build/out/$project":/out -v "/mydata/data/code/fuzzing/oss-fuzz/build/work/$project":/work -t "gcr.io/oss-fuzz/$project" "/work/save_ai_corpus.sh" && \
       popd
   done
 }
 
 # copy_src_from_docker
-# batch_gen_seeds
+batch_gen_seeds
 
-run_batch_seedgen_scripts
+# run_batch_seedgen_scripts
