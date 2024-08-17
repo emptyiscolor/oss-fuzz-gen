@@ -5,6 +5,7 @@ to_count_cov_proj_file="/mydata/data/code/fuzzing/oss-fuzz/to_count_cov_proj.txt
 CSV_HARNESS_FILE="/mydata/data/code/fuzzing/oss-fuzz-gen/filtered_harness.csv"
 BENCHMARK_OSS_SEEDS_DIR="/mydata/data/code/fuzzing/oss-fuzz-gen"
 OSSFUZZ_DIR="/mydata/data/code/fuzzing/oss-fuzz"
+BUILTIN_COV_CSV="/tmp/oss-fuzz_builtin_cov.csv"
 
 function get_proj_src() {
   project=$1
@@ -78,6 +79,18 @@ function copy_generated_corpus() {
   popd
 }
 
+function count_builtin_cov() {
+  pushd $OSSFUZZ_DIR
+  find build/cov_report/builtin/ -name summary.json | grep report_target | while read -r summary_path; do
+      binary_name=$(basename "$(dirname "$(dirname "$summary_path")")")
+      project=$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$summary_path")")")")")
+      printf "$project\t$binary_name\t"
+      jq .data[].totals.lines.percent < "$summary_path"
+  done
+
+  popd
+}
+
 function generate_cov() {
   # python infra/helper.py coverage --fuzz-target=$binary_name --corpus-dir=$corpus_dir $project --no-serve
   while IFS= read -r line; do
@@ -104,9 +117,38 @@ function generate_cov() {
   done < "$CSV_HARNESS_FILE"
 }
 
+function filter_builtin_cov() {
+  pushd $OSSFUZZ_DIR
+  while IFS= read -r line; do
+    # Split the line into fields using ':' as the delimiter
+    IFS=',' read -r -a fields <<< "$line"
+
+    # Extract project_name and source_code_file
+    project_name="${fields[0]}"
+    binary_name="${fields[1]}"
+    source_code_file_with_info="${fields[2]}"
+
+    cov_per_text=$(grep $binary_name $BUILTIN_COV_CSV | grep $project_name)
+    if [ $? -ne 0 ]; then
+      cov_per="NA"
+    else
+      cov_per=$(echo $cov_per_text | head -n1 | awk '{print $3}')
+    fi
+
+    # echo $cov_per
+    printf "$project_name,$binary_name,${source_code_file_with_info}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | tee -a /tmp/filtered_harness.csv
+    echo ,$cov_per | tee -a /tmp/filtered_harness.csv
+
+  done < "$CSV_HARNESS_FILE"
+
+  popd
+}
+
 # copy_src_from_docker
 # batch_gen_seeds
 
 # run_batch_seedgen_scripts
 
-generate_cov
+# generate_cov
+
+filter_builtin_cov
