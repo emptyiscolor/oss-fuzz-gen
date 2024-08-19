@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Define the input file
 proj_input_file="/tmp/input.txt"
 to_generated_file="/mydata/data/code/fuzzing/oss-fuzz/to_generated.txt"
@@ -6,6 +8,7 @@ CSV_HARNESS_FILE="/mydata/data/code/fuzzing/oss-fuzz-gen/filtered_harness.csv"
 BENCHMARK_OSS_SEEDS_DIR="/mydata/data/code/fuzzing/oss-fuzz-gen"
 OSSFUZZ_DIR="/mydata/data/code/fuzzing/oss-fuzz"
 BUILTIN_COV_CSV="/tmp/oss-fuzz_builtin_cov.csv"
+OSSFUZZ_AI_COV_CSV="/tmp/oss-fuzz_aigen_cov.csv"
 
 function get_proj_src() {
   project=$1
@@ -47,6 +50,30 @@ function batch_gen_seeds() {
   done
 }
 
+function collect_builtin_seeds() {
+  while IFS= read -r line; do
+    # Split the line into fields using ':' as the delimiter
+    IFS=',' read -r -a fields <<< "$line"
+
+    # Extract project_name and source_code_file
+    project_name="${fields[0]}"
+    binary_name="${fields[1]}"
+    source_code_file_with_info="${fields[2]}"
+    builtin_corpus_dir="$OSSFUZZ_DIR/build/corpus/$project_name/builtin_corpus"
+
+    mkdir -p $builtin_corpus_dir
+    for zipfile in $(find $OSSFUZZ_DIR/build/out/$project_name -name "*.zip"); do
+      echo "Unzipping $zipfile"
+      pushd $builtin_corpus_dir
+      sub_dir=$(basename $zipfile .zip)
+      mkdir -p $sub_dir
+      unzip -o $zipfile -d $builtin_corpus_dir/$sub_dir
+      popd
+    done
+
+  done < "$CSV_HARNESS_FILE"
+}
+
 function run_batch_seedgen_scripts() {
   for project in $(cat $to_count_cov_proj_file); do
     echo "Running batch seedgen for project: $project"
@@ -81,11 +108,11 @@ function copy_generated_corpus() {
 
 function count_builtin_cov() {
   pushd $OSSFUZZ_DIR
-  find build/cov_report/builtin/ -name summary.json | grep report_target | while read -r summary_path; do
+  find build/out/ -name summary.json | grep report_target | while read -r summary_path; do
       binary_name=$(basename "$(dirname "$(dirname "$summary_path")")")
       project=$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$summary_path")")")")")
-      printf "$project\t$binary_name\t"
-      jq .data[].totals.lines.percent < "$summary_path"
+      cov=$(jq .data[].totals.lines.percent < "$summary_path")
+      printf "$project\t$binary_name\t$cov\n" | tee -a $OSSFUZZ_AI_COV_CSV
   done
 
   popd
@@ -110,8 +137,10 @@ function generate_cov() {
     # if build/cov_report/builtin/$project exists, skip
     if [ -d "$OSSFUZZ_DIR/build/corpus/$project_name/aigen_corpus" ] ; then
       echo "Generating code coverage: $project_name"
-      python infra/helper.py build_fuzzers --sanitizer=coverage $project_name
-      python infra/helper.py coverage --fuzz-target=$binary_name --corpus-dir="$OSSFUZZ_DIR/build/corpus/$project_name/aigen_corpus" $project_name --no-serve
+      # python infra/helper.py build_fuzzers --sanitizer=coverage $project_name
+      timeout 20m python infra/helper.py coverage --fuzz-target=$binary_name --corpus-dir="$OSSFUZZ_DIR/build/corpus/$project_name/aigen_corpus" $project_name --no-serve
+      mkdir -p $OSSFUZZ_DIR/build/cov_report/aigen/$project_name
+      cp -rf $OSSFUZZ_DIR/build/out/$project_name/report_target $OSSFUZZ_DIR/build/cov_report/aigen/$project_name/
     fi
 
   done < "$CSV_HARNESS_FILE"
@@ -127,8 +156,37 @@ function filter_builtin_cov() {
     project_name="${fields[0]}"
     binary_name="${fields[1]}"
     source_code_file_with_info="${fields[2]}"
+    language=$(cat $OSSFUZZ_DIR/projects/$project_name/project.yaml | yq ".language")
 
     cov_per_text=$(grep $binary_name $BUILTIN_COV_CSV | grep $project_name)
+    if [ $? -ne 0 ]; then
+      cov_per="NA"
+    else
+      cov_per=$(echo $cov_per_text | head -n1 | awk '{print $3}')
+    fi
+
+    # echo $cov_per
+    printf "$project_name,$language,$binary_name,${source_code_file_with_info}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//' | tee -a /tmp/filtered_harness.csv
+    echo ",$cov_per" | tee -a /tmp/filtered_harness.csv
+
+  done < "$CSV_HARNESS_FILE"
+
+  popd
+}
+
+function filter_ossfuzz_aigen_cov() {
+  # TODO: Implement this function
+  pushd $OSSFUZZ_DIR
+  while IFS= read -r line; do
+    # Split the line into fields using ':' as the delimiter
+    IFS=',' read -r -a fields <<< "$line"
+
+    # Extract project_name and source_code_file
+    project_name="${fields[0]}"
+    binary_name="${fields[1]}"
+    source_code_file_with_info="${fields[2]}"
+
+    cov_per_text=$(grep $binary_name $OSSFUZZ_AI_COV_CSV | grep $project_name)
     if [ $? -ne 0 ]; then
       cov_per="NA"
     else
@@ -151,4 +209,8 @@ function filter_builtin_cov() {
 
 # generate_cov
 
-filter_builtin_cov
+# filter_builtin_cov
+
+# filter_ossfuzz_aigen_cov
+
+collect_builtin_seeds
