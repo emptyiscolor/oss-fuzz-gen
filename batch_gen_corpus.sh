@@ -2,7 +2,7 @@
 
 # Define the input file
 proj_input_file="/tmp/input.txt"
-to_generated_file="/mydata/data/code/fuzzing/oss-fuzz/to_generated.txt"
+TO_GENERATED_FILE="/mydata/data/code/fuzzing/oss-fuzz/to_generated.txt"
 to_count_cov_proj_file="/mydata/data/code/fuzzing/oss-fuzz/to_count_cov_proj.txt"
 CSV_HARNESS_FILE="/mydata/data/code/fuzzing/oss-fuzz-gen/filtered_harness.csv"
 BENCHMARK_OSS_SEEDS_DIR="/mydata/data/code/fuzzing/oss-fuzz-gen"
@@ -13,7 +13,7 @@ OSSFUZZ_AI_COV_CSV="/tmp/oss-fuzz_aigen_cov.csv"
 function get_proj_src() {
   project=$1
   src_path=$2
-  docker run --rm --privileged --shm-size=2g --platform linux/amd64 -e FUZZING_ENGINE=libfuzzer -e SANITIZER=address -e ARCHITECTURE=x86_64 -e HELPER=True -e FUZZING_LANGUAGE=c++ -v "/mydata/data/code/fuzzing/oss-fuzz/build/out/$1":/out -v "/mydata/data/code/fuzzing/oss-fuzz/build/work/$1":/work -t "gcr.io/oss-fuzz/$1" cp -f $src_path /work/
+  docker run --rm --privileged --shm-size=2g --platform linux/amd64 -e FUZZING_ENGINE=libfuzzer -e SANITIZER=address -e ARCHITECTURE=x86_64 -e HELPER=True -e FUZZING_LANGUAGE=c++ -v "$OSSFUZZ_DIR/build/out/$1":/out -v "$OSSFUZZ_DIR/build/work/$1":/work -t "gcr.io/oss-fuzz/$1" cp -f $src_path /work/
 }
 
 function copy_src_from_docker() {
@@ -40,7 +40,7 @@ function copy_src_from_docker() {
 }
 
 function batch_gen_seeds() {
-  for harness in $(cat $to_generated_file); do
+  for harness in $(cat $TO_GENERATED_FILE); do
     IFS=',' read -r -a fields <<< "$harness"
     project_name="${fields[0]}"
     src_path="${fields[1]}"
@@ -48,30 +48,6 @@ function batch_gen_seeds() {
     # get_proj_src "$project_name" "$src_path"
     python test_one_corpus_generate.py $project_name $src_path
   done
-}
-
-function collect_builtin_seeds() {
-  while IFS= read -r line; do
-    # Split the line into fields using ':' as the delimiter
-    IFS=',' read -r -a fields <<< "$line"
-
-    # Extract project_name and source_code_file
-    project_name="${fields[0]}"
-    binary_name="${fields[1]}"
-    source_code_file_with_info="${fields[2]}"
-    builtin_corpus_dir="$OSSFUZZ_DIR/build/corpus/$project_name/builtin_corpus"
-
-    mkdir -p $builtin_corpus_dir
-    for zipfile in $(find $OSSFUZZ_DIR/build/out/$project_name -name "*.zip"); do
-      echo "Unzipping $zipfile"
-      pushd $builtin_corpus_dir
-      sub_dir=$(basename $zipfile .zip)
-      mkdir -p $sub_dir
-      unzip -o $zipfile -d $builtin_corpus_dir/$sub_dir
-      popd
-    done
-
-  done < "$CSV_HARNESS_FILE"
 }
 
 function run_batch_seedgen_scripts() {
@@ -85,7 +61,7 @@ function run_batch_seedgen_scripts() {
       cp -f $BENCHMARK_OSS_SEEDS_DIR/save_ai_corpus.sh ./build/work/$project/ && \
       mkdir -p ./build/work/$project/corpus && \
       cp -f $BENCHMARK_OSS_SEEDS_DIR/benchmark-seedgen/$project/*.py ./build/work/$project/ && \
-      docker run --rm --privileged --shm-size=2g --platform linux/amd64 -e FUZZING_ENGINE=libfuzzer -e SANITIZER=address -e ARCHITECTURE=x86_64 -e HELPER=True -e FUZZING_LANGUAGE=c++ -v "/mydata/data/code/fuzzing/oss-fuzz/build/out/$project":/out -v "/mydata/data/code/fuzzing/oss-fuzz/build/work/$project":/work -t "gcr.io/oss-fuzz/$project" "/work/save_ai_corpus.sh" && \
+      docker run --rm --privileged --shm-size=2g --platform linux/amd64 -e FUZZING_ENGINE=libfuzzer -e SANITIZER=address -e ARCHITECTURE=x86_64 -e HELPER=True -e FUZZING_LANGUAGE=c++ -v "$OSSFUZZ_DIR/build/out/$project":/out -v "$OSSFUZZ_DIR/build/work/$project":/work -t "gcr.io/oss-fuzz/$project" "/work/save_ai_corpus.sh" && \
       popd
   done
 }
@@ -108,11 +84,11 @@ function copy_generated_corpus() {
 
 function count_builtin_cov() {
   pushd $OSSFUZZ_DIR
-  find build/out/ -name summary.json | grep report_target | while read -r summary_path; do
+  find build/cov_report/builtin -name summary.json | grep report_target | while read -r summary_path; do
       binary_name=$(basename "$(dirname "$(dirname "$summary_path")")")
       project=$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$summary_path")")")")")
       cov=$(jq .data[].totals.lines.percent < "$summary_path")
-      printf "$project\t$binary_name\t$cov\n" | tee -a $OSSFUZZ_AI_COV_CSV
+      printf "$project\t$binary_name\t$cov\n" | tee -a /tmp/oss-fuzz_aigen_cov.csv
   done
 
   popd
@@ -138,9 +114,47 @@ function generate_cov() {
     if [ -d "$OSSFUZZ_DIR/build/corpus/$project_name/aigen_corpus" ] ; then
       echo "Generating code coverage: $project_name"
       # python infra/helper.py build_fuzzers --sanitizer=coverage $project_name
-      timeout 20m python infra/helper.py coverage --fuzz-target=$binary_name --corpus-dir="$OSSFUZZ_DIR/build/corpus/$project_name/aigen_corpus" $project_name --no-serve
+      timeout 20m python infra/helper.py coverage --fuzz-target=$binary_name --corpus-dir="$OSSFUZZ_DIR/build/corpus/$project_name/aigen_corpus" --no-serve $project_name 
+      if [ $? -eq 124 ]; then
+        echo "Timeout reached. Running another command..."
+        docker stop $(docker ps -q)
+      fi
       mkdir -p $OSSFUZZ_DIR/build/cov_report/aigen/$project_name
       cp -rf $OSSFUZZ_DIR/build/out/$project_name/report_target $OSSFUZZ_DIR/build/cov_report/aigen/$project_name/
+    fi
+
+  done < "$CSV_HARNESS_FILE"
+}
+
+function generate_cov_builtin_seeds() {
+  # python infra/helper.py coverage --fuzz-target=$binary_name --corpus-dir=$corpus_dir $project --no-serve
+  while IFS= read -r line; do
+    # Split the line into fields using ':' as the delimiter
+    IFS=',' read -r -a fields <<< "$line"
+
+    # Extract project_name and source_code_file
+    project_name="${fields[0]}"
+    binary_name="${fields[1]}"
+    source_code_file_with_info="${fields[2]}"
+
+    # Remove the line number and column number from source_code_file
+    source_code_file="${source_code_file_with_info%:*:*}"
+
+    echo "Project Name: $project_name, Binary Name: $binary_name, Source Code File: $source_code_file"
+
+    # if build/cov_report/builtin/$project exists, skip
+    if [ -d "$OSSFUZZ_DIR/build/corpus/$project_name/builtin_corpus" ] ; then
+      echo "Generating code coverage: $project_name"
+      if ! [ -d "$OSSFUZZ_DIR/build/out/$project_name/src" ] ; then
+        python infra/helper.py build_fuzzers --sanitizer=coverage $project_name
+      fi  
+      timeout 30m python infra/helper.py coverage --fuzz-target=$binary_name --corpus-dir="$OSSFUZZ_DIR/build/corpus/$project_name/builtin_corpus" --no-serve $project_name 
+      if [ $? -eq 124 ]; then
+        echo "Timeout reached. Running another command..."
+        docker stop $(docker ps -q)
+      fi
+      mkdir -p $OSSFUZZ_DIR/build/cov_report/builtin/$project_name
+      cp -rf $OSSFUZZ_DIR/build/out/$project_name/report_target $OSSFUZZ_DIR/build/cov_report/builtin/$project_name/
     fi
 
   done < "$CSV_HARNESS_FILE"
@@ -213,4 +227,4 @@ function filter_ossfuzz_aigen_cov() {
 
 # filter_ossfuzz_aigen_cov
 
-collect_builtin_seeds
+generate_cov_builtin_seeds
