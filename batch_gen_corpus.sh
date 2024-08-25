@@ -67,6 +67,24 @@ function run_batch_seedgen_scripts() {
   done
 }
 
+function run_cmin_scripts() {
+  while IFS= read -r line; do
+    # Split the line into fields using ':' as the delimiter
+    IFS=',' read -r -a fields <<< "$line"
+
+    # Extract project_name and source_code_file
+    project_name="${fields[0]}"
+    binary_name="${fields[1]}"
+    source_code_file_with_info="${fields[2]}"
+    echo "Running cmin for project: $project_name, Binary: $binary_name"
+    cp -f $BENCHMARK_OSS_SEEDS_DIR/cmin.sh $OSSFUZZ_DIR/build/out/$project_name/
+    pushd "$OSSFUZZ_DIR" && \
+      mkdir -p build/work/$project && \
+      docker run --rm --privileged --shm-size=4g --platform linux/amd64 -e FUZZING_ENGINE=libfuzzer -e HELPER=True -e PROJECT="$project_name" -e SANITIZER=coverage -e 'COVERAGE_EXTRA_ARGS= ' -e ARCHITECTURE=x86_64 -v $OSSFUZZ_DIR/build/corpus/$project_name/aigen_corpus:/corpus -v $OSSFUZZ_DIR/build/out/$project_name:/out -t gcr.io/oss-fuzz-base/base-runner /out/cmin.sh $binary_name
+    popd
+  done < "$CSV_HARNESS_FILE"
+}
+
 function copy_generated_corpus() {
   # Find all aigen_corpus directories under build/work/
   pushd $OSSFUZZ_DIR
@@ -222,10 +240,10 @@ function filter_ossfuzz_aigen_cov() {
 
 # run_batch_seedgen_scripts
 
-# generate_cov
+generate_cov
 
 # filter_builtin_cov
 
 # filter_ossfuzz_aigen_cov
 
-generate_cov_builtin_seeds
+# generate_cov_builtin_seeds
