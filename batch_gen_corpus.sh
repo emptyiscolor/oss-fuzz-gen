@@ -42,6 +42,7 @@ function copy_src_from_docker() {
 function batch_gen_seeds() {
   for harness in $(cat $TO_GENERATED_FILE); do
     IFS=',' read -r -a fields <<< "$harness"
+    # IFS=$'\t' read -r -a fields <<< "$harness"
     project_name="${fields[0]}"
     src_path="${fields[1]}"
     echo "Generating... Project: $project_name,  Source Path: $src_path"
@@ -88,7 +89,7 @@ function count_builtin_cov() {
       binary_name=$(basename "$(dirname "$(dirname "$summary_path")")")
       project=$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$summary_path")")")")")
       cov=$(jq .data[].totals.lines.percent < "$summary_path")
-      printf "$project\t$binary_name\t$cov\n" | tee -a /tmp/oss-fuzz_aigen_cov.csv
+      printf "$project\t$binary_name\t$cov\n" | tee -a $BUILTIN_COV_CSV
   done
 
   popd
