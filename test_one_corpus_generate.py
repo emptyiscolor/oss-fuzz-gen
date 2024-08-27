@@ -107,14 +107,18 @@ def save_single_script(project_name, harness_name, generated_script):
     if not os.path.exists(script_folder):
         os.makedirs(script_folder)
 
+    pattern = r"Here is a Python.*?:"
+    output_text = re.sub(pattern, "", generated_script, flags=re.DOTALL)
+
     with open(script_path, "w") as f:
-        f.write(generated_script)
+        f.write(output_text)
     print("Saved to ", script_path)
 
 
 def test_one():
     ai_binary = ""
-    model_name = "gpt-4o"
+    # model_name = "gpt-4o"
+    model_name = "vertex_ai_claude-3-opus"
     target_harness_path = "benchmark-seedgen/bind9/dns_message_checksig.c"
     project_name = "bind9"
     target_func_src = TESTING_SAMPLE_1
@@ -133,7 +137,9 @@ def main():
     parser.add_argument("target_harness_path", type=str)
     args = parser.parse_args()
     ai_binary = ""
-    model_name = "gpt-4o"
+    # model_name = "gpt-4o"
+    model_name = "vertex_ai_claude-3-opus"
+    # model_name = "vertex_ai_claude-3-5-sonnet"
     log_file = "/tmp/metrics_gen_ai_generator.log"
     project_name = args.project_name
     target_harness_path = args.target_harness_path

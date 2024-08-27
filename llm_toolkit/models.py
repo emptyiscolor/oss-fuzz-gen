@@ -302,9 +302,21 @@ class Claude(LLM):
     region = random.sample(vertex_ai_locations, 1)[0]
     client = anthropic.AnthropicVertex(region=region, project_id=project_id)
 
+    constant_text_user = "Wrap the program in <results> tags in the reply and do not return any other text."
+    messages = prompt.get()
+    if messages and messages[0]["role"] == "system":
+        system = messages.pop(0)["content"].replace(constant_text_user, " ")
+    else:
+        system = ""
+
+    # print("System:", system)
+    user_message = [{"role": "user", "content": "Wrap the code in <results> tags in the reply and do not return any other text. And do not return any other text like 'Here's a Python script...' one."}]
+    # print("Message:", user_message)
+
     completion = self.with_retry_on_error(
         lambda: client.messages.create(max_tokens=self._max_output_tokens,
-                                       messages=prompt.get(),
+                                       system=system,
+                                       messages= user_message,
                                        model=self.get_model(),
                                        temperature=self.temperature),
         anthropic.AnthropicError)

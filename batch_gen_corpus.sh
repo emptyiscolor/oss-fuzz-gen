@@ -252,10 +252,10 @@ function filter_ossfuzz_aigen_cov() {
 
 # run_batch_seedgen_scripts
 
-generate_cov
+# generate_cov
 
 # filter_builtin_cov
 
-# filter_ossfuzz_aigen_cov
+filter_ossfuzz_aigen_cov
 
 # generate_cov_builtin_seeds
