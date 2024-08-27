@@ -113,6 +113,18 @@ function count_builtin_cov() {
   popd
 }
 
+function count_aigen_cov() {
+  pushd $OSSFUZZ_DIR
+  find build/cov_report/aigen -name summary.json | grep report_target | while read -r summary_path; do
+      binary_name=$(basename "$(dirname "$(dirname "$summary_path")")")
+      project=$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$summary_path")")")")")
+      cov=$(jq .data[].totals.lines.percent < "$summary_path")
+      printf "$project\t$binary_name\t$cov\n" | tee -a $OSSFUZZ_AI_COV_CSV
+  done
+
+  popd
+}
+
 function generate_cov() {
   # python infra/helper.py coverage --fuzz-target=$binary_name --corpus-dir=$corpus_dir $project --no-serve
   while IFS= read -r line; do
@@ -129,10 +141,10 @@ function generate_cov() {
 
     echo "Project Name: $project_name, Binary Name: $binary_name, Source Code File: $source_code_file"
 
-    # if build/cov_report/builtin/$project exists, skip
     if [ -d "$OSSFUZZ_DIR/build/corpus/$project_name/aigen_corpus" ] ; then
       echo "Generating code coverage: $project_name"
-      # python infra/helper.py build_fuzzers --sanitizer=coverage $project_name
+      grep $project_name /tmp/last_project.txt || python infra/helper.py build_fuzzers --sanitizer=coverage $project_name
+      echo $project_name > /tmp/last_project.txt
       timeout 20m python infra/helper.py coverage --fuzz-target=$binary_name --corpus-dir="$OSSFUZZ_DIR/build/corpus/$project_name/aigen_corpus" --no-serve $project_name 
       if [ $? -eq 124 ]; then
         echo "Timeout reached. Running another command..."
