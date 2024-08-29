@@ -9,6 +9,7 @@ BENCHMARK_OSS_SEEDS_DIR="/mydata/data/code/fuzzing/oss-fuzz-gen"
 OSSFUZZ_DIR="/mydata/data/code/fuzzing/oss-fuzz"
 BUILTIN_COV_CSV="/tmp/oss-fuzz_builtin_cov.csv"
 OSSFUZZ_AI_COV_CSV="/tmp/oss-fuzz_aigen_cov.csv"
+CORPUS_SAVE_NAME="claude3-opus-aigen_corpus"
 
 function get_proj_src() {
   project=$1
@@ -52,7 +53,7 @@ function batch_gen_seeds() {
 }
 
 function run_batch_seedgen_scripts() {
-  for project in $(cat $to_count_cov_proj_file); do
+  for project in $(cat $TO_GENERATED_FILE  | cut -d',' -f1 | sort -u); do
     echo "Running batch seedgen for project: $project"
     pushd "$OSSFUZZ_DIR" && \
       mkdir -p build/work/$project && \
@@ -141,11 +142,11 @@ function generate_cov() {
 
     echo "Project Name: $project_name, Binary Name: $binary_name, Source Code File: $source_code_file"
 
-    if [ -d "$OSSFUZZ_DIR/build/corpus/$project_name/aigen_corpus" ] ; then
+    if [ -d "$OSSFUZZ_DIR/build/corpus/$project_name/$CORPUS_SAVE_NAME" ] ; then
       echo "Generating code coverage: $project_name"
-      grep $project_name /tmp/last_project.txt || python infra/helper.py build_fuzzers --sanitizer=coverage $project_name
+      # grep $project_name /tmp/last_project.txt || python infra/helper.py build_fuzzers --sanitizer=coverage $project_name
       echo $project_name > /tmp/last_project.txt
-      timeout 20m python infra/helper.py coverage --fuzz-target=$binary_name --corpus-dir="$OSSFUZZ_DIR/build/corpus/$project_name/aigen_corpus" --no-serve $project_name 
+      timeout 20m python infra/helper.py coverage --fuzz-target=$binary_name --corpus-dir="$OSSFUZZ_DIR/build/corpus/$project_name/$CORPUS_SAVE_NAME" --no-serve $project_name 
       if [ $? -eq 124 ]; then
         echo "Timeout reached. Running another command..."
         docker stop $(docker ps -q)
@@ -252,10 +253,10 @@ function filter_ossfuzz_aigen_cov() {
 
 # run_batch_seedgen_scripts
 
-# generate_cov
+generate_cov
 
 # filter_builtin_cov
 
-filter_ossfuzz_aigen_cov
+# filter_ossfuzz_aigen_cov
 
 # generate_cov_builtin_seeds

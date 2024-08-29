@@ -10,4 +10,5 @@ __pycache__/
 *.swp
 benchmark-seedgen/*
 benchmark-seedgen_bak_round1/*
-benchmark-seedgen-gpt4o/*
+benchmark-seedgen*/*
+benchmark-seedgen-claude3-opus/*

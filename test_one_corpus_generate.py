@@ -137,8 +137,8 @@ def main():
     parser.add_argument("target_harness_path", type=str)
     args = parser.parse_args()
     ai_binary = ""
-    # model_name = "gpt-4o"
-    model_name = "vertex_ai_claude-3-opus"
+    model_name = "gpt-4o"
+    # model_name = "vertex_ai_claude-3-opus"
     # model_name = "vertex_ai_claude-3-5-sonnet"
     log_file = "/tmp/metrics_gen_ai_generator.log"
     project_name = args.project_name
