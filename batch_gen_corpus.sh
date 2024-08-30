@@ -116,12 +116,35 @@ function count_builtin_cov() {
 
 function count_aigen_cov() {
   pushd $OSSFUZZ_DIR
-  find build/cov_report/aigen -name summary.json | grep report_target | while read -r summary_path; do
-      binary_name=$(basename "$(dirname "$(dirname "$summary_path")")")
-      project=$(basename "$(dirname "$(dirname "$(dirname "$(dirname "$summary_path")")")")")
+
+  echo > /tmp/filtered_harness.csv
+
+  while IFS= read -r line; do
+    # Split the line into fields using ':' as the delimiter
+    IFS=',' read -r -a fields <<< "$line"
+
+    # Extract project_name and source_code_file
+    project_name="${fields[0]}"
+    binary_name="${fields[1]}"
+    source_code_file_with_info="${fields[2]}"
+
+    # Remove the line number and column number from source_code_file
+    source_code_file="${source_code_file_with_info%:*:*}"
+
+    # echo "Project Name: $project_name, Binary Name: $binary_name, Source Code File: $source_code_file"
+
+    if [ -d "$OSSFUZZ_DIR/build/cov_report/aigen/$project_name/report_target/$binary_name/linux/" ] ; then
+      # echo "Geting code coverage: $project_name, $binary_name"
+      summary_path="$OSSFUZZ_DIR/build/cov_report/aigen/$project_name/report_target/$binary_name/linux/summary.json"
       cov=$(jq .data[].totals.lines.percent < "$summary_path")
-      printf "$project\t$binary_name\t$cov\n" | tee -a $OSSFUZZ_AI_COV_CSV
-  done
+    else
+      # echo "No coverage report found for $project_name, $binary_name"
+      cov="NA"
+    fi
+
+    echo "$project_name,$binary_name,$cov" | tee -a /tmp/filtered_harness.csv
+
+  done < "$CSV_HARNESS_FILE"
 
   popd
 }
@@ -253,10 +276,11 @@ function filter_ossfuzz_aigen_cov() {
 
 # run_batch_seedgen_scripts
 
-generate_cov
+# generate_cov
 
 # filter_builtin_cov
 
 # filter_ossfuzz_aigen_cov
 
 # generate_cov_builtin_seeds
+count_aigen_cov
