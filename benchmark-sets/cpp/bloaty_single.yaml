@@ -1,0 +1,11 @@
+"functions":
+- "name": "_ZN6bloaty8DualMaps13ComputeRollupEPNS_6RollupE"
+  "params":
+  - "name": "rollup"
+    "type": "bloaty::Rollup *"
+  "return_type": "void"
+  "signature": "void bloaty::DualMaps::ComputeRollup(bloaty::Rollup *)"
+"language": "c++"
+"project": "bloaty"
+"target_name": "fuzz_target"
+"target_path": "/src/bloaty/tests/fuzz_target.cc"

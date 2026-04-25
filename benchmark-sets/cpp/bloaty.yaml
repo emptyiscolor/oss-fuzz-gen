@@ -1,0 +1,676 @@
+functions:
+- name: _ZN6bloaty8DualMaps13ComputeRollupEPNS_6RollupE
+  params:
+  - name: rollup
+    type: bloaty::Rollup *
+  return_type: void
+  signature: void bloaty::DualMaps::ComputeRollup(bloaty::Rollup *)
+- name: _ZN6bloaty6Rollup11AddInternalERKSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEmmb
+  params:
+  - name: names
+    type: const int &
+  - name: i
+    type: int
+  - name: size
+    type: uint64_t
+  - name: is_vmsize
+    type: bool
+  return_type: void
+  signature: void bloaty::Rollup::AddInternal(const int &, int, uint64_t, bool)
+- name: _ZN6bloaty9RangeSink10AddVMRangeEPKcmmRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+  params:
+  - name: analyzer
+    type: const char *
+  - name: vmaddr
+    type: uint64_t
+  - name: vmsize
+    type: uint64_t
+  - name: name
+    type: const std::string &
+  return_type: void
+  signature: void bloaty::RangeSink::AddVMRange(const char *, uint64_t, uint64_t, const std::string &)
+- name: _ZN6bloaty9RangeSink19IsVerboseForVMRangeEmm
+  params:
+  - name: vmaddr
+    type: uint64_t
+  - name: vmsize
+    type: uint64_t
+  return_type: bool
+  signature: bool bloaty::RangeSink::IsVerboseForVMRange(uint64_t, uint64_t)
+- name: _ZN6bloaty14FileDescriptor2fdEv
+  params: []
+  return_type: int
+  signature: int bloaty::FileDescriptor::fd()
+- name: _ZN6google8protobuf8internal9ArenaImpl4InitEv
+  params: []
+  return_type: void
+  signature: void google::protobuf::internal::ArenaImpl::Init()
+- name: _ZN6bloaty7Options27_internal_set_verbose_levelEi
+  params:
+  - name: value
+    type: ::google::protobuf::int32
+  return_type: void
+  signature: void bloaty::Options::_internal_set_verbose_level(::google::protobuf::int32)
+- name: _ZN6bloaty7Options26_internal_set_debug_vmaddrEm
+  params:
+  - name: value
+    type: ::google::protobuf::uint64
+  return_type: void
+  signature: void bloaty::Options::_internal_set_debug_vmaddr(::google::protobuf::uint64)
+- name: _ZN6bloaty7Options27_internal_set_debug_fileoffEm
+  params:
+  - name: value
+    type: ::google::protobuf::uint64
+  return_type: void
+  signature: void bloaty::Options::_internal_set_debug_fileoff(::google::protobuf::uint64)
+- name: _ZN6bloaty7Options32_internal_set_max_rows_per_levelEl
+  params:
+  - name: value
+    type: ::google::protobuf::int64
+  return_type: void
+  signature: void bloaty::Options::_internal_set_max_rows_per_level(::google::protobuf::int64)
+- name: _ZN6bloaty7Options26_internal_set_dump_raw_mapEb
+  params:
+  - name: value
+    type: bool
+  return_type: void
+  signature: void bloaty::Options::_internal_set_dump_raw_map(bool)
+- name: _ZN6bloaty6Rollup14SetFilterRegexEPKNS_6ReImplE
+  params:
+  - name: regex
+    type: const bloaty::ReImpl *
+  return_type: void
+  signature: void bloaty::Rollup::SetFilterRegex(const bloaty::ReImpl *)
+- name: _ZN6bloaty6Rollup3AddERKS0_
+  params:
+  - name: other
+    type: const bloaty::Rollup &
+  return_type: void
+  signature: void bloaty::Rollup::Add(const bloaty::Rollup &)
+- name: _ZN6bloaty19ThreadSafeIterIndex11TryGetErrorEPNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+  params:
+  - name: error
+    type: std::string *
+  return_type: bool
+  signature: bool bloaty::ThreadSafeIterIndex::TryGetError(std::string *)
+- name: _ZN6bloaty10NameMunger8AddRegexERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
+  params:
+  - name: regex
+    type: const std::string &
+  - name: replacement
+    type: const std::string &
+  return_type: void
+  signature: void bloaty::NameMunger::AddRegex(const std::string &, const std::string &)
+- name: _ZN6bloaty6Bloaty19GetDsymInternalPathERKNSt10filesystem7__cxx114pathERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+  params:
+  - name: dsym_bundle
+    type: const std::filesystem::path &
+  - name: binary_name
+    type: const std::string &
+  return_type: std::filesystem::path
+  signature: std::filesystem::path bloaty::Bloaty::GetDsymInternalPath(const std::filesystem::path &, const std::string &)
+- name: _ZN6bloaty6Bloaty21TryValidateAndAddDsymERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_b
+  params:
+  - name: dsym_path
+    type: const std::string &
+  - name: main_binary_path
+    type: const std::string &
+  - name: strict_validation
+    type: bool
+  return_type: bool
+  signature: bool bloaty::Bloaty::TryValidateAndAddDsym(const std::string &, const std::string &, bool)
+- name: _ZN6bloaty6Bloaty15TryAutoLoadDsymERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
+  params:
+  - name: binary_path
+    type: const std::string &
+  - name: build_id
+    type: const std::string &
+  return_type: void
+  signature: void bloaty::Bloaty::TryAutoLoadDsym(const std::string &, const std::string &)
+- name: _ZN6bloaty6Bloaty17ConstructDsymPathERKNSt10filesystem7__cxx114pathE
+  params:
+  - name: binary_path
+    type: const std::filesystem::path &
+  return_type: std::filesystem::path
+  signature: std::filesystem::path bloaty::Bloaty::ConstructDsymPath(const std::filesystem::path &)
+- name: _ZN6bloaty9RangeSink14ZstdDecompressESt17basic_string_viewIcSt11char_traitsIcEEm
+  params:
+  - name: contents
+    type: int
+  - name: uncompressed_size
+    type: uint64_t
+  return_type: int
+  signature: int bloaty::RangeSink::ZstdDecompress(int, uint64_t)
+- name: _ZN6bloaty9RangeSink14ZlibDecompressESt17basic_string_viewIcSt11char_traitsIcEEm
+  params:
+  - name: contents
+    type: int
+  - name: uncompressed_size
+    type: uint64_t
+  return_type: int
+  signature: int bloaty::RangeSink::ZlibDecompress(int, uint64_t)
+- name: _ZNK6bloaty9RangeSink19FileContainsPointerEPKv
+  params:
+  - name: ptr
+    type: const void *
+  return_type: bool
+  signature: bool bloaty::RangeSink::FileContainsPointer(const void *) const
+- name: _ZN6bloaty9RangeSink17TranslateFileToVMEPKc
+  params:
+  - name: ptr
+    type: const char *
+  return_type: uint64_t
+  signature: uint64_t bloaty::RangeSink::TranslateFileToVM(const char *)
+- name: _ZN6bloaty9RangeSink8AddRangeEPKcSt17basic_string_viewIcSt11char_traitsIcEEmmmm
+  params:
+  - name: analyzer
+    type: const char *
+  - name: name
+    type: int
+  - name: vmaddr
+    type: uint64_t
+  - name: vmsize
+    type: uint64_t
+  - name: file_range
+    type: int
+  return_type: void
+  signature: void bloaty::RangeSink::AddRange(const char *, int, uint64_t, uint64_t, int)
+- name: _ZN6bloaty9RangeSink25AddVMRangeIgnoreDuplicateEPKcmmRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+  params:
+  - name: analyzer
+    type: const char *
+  - name: vmaddr
+    type: uint64_t
+  - name: size
+    type: uint64_t
+  - name: name
+    type: const std::string &
+  return_type: void
+  signature: void bloaty::RangeSink::AddVMRangeIgnoreDuplicate(const char *, uint64_t, uint64_t, const std::string &)
+- name: _ZN6bloaty9RangeSink19AddVMRangeForVMAddrEPKcmmm
+  params:
+  - name: analyzer
+    type: const char *
+  - name: label_from_vmaddr
+    type: uint64_t
+  - name: addr
+    type: uint64_t
+  - name: size
+    type: uint64_t
+  return_type: void
+  signature: void bloaty::RangeSink::AddVMRangeForVMAddr(const char *, uint64_t, uint64_t, uint64_t)
+- name: _ZNK6bloaty5Regex13SetCachedSizeEi
+  params:
+  - name: size
+    type: int
+  return_type: void
+  signature: void bloaty::Regex::SetCachedSize(int) const
+- name: _ZN6bloaty5Regex9MergeFromERKS0_
+  params:
+  - name: from
+    type: const bloaty::Regex &
+  return_type: void
+  signature: void bloaty::Regex::MergeFrom(const bloaty::Regex &)
+- name: _ZN6google8protobuf8internal24ComputeUnknownFieldsSizeERKNS1_16InternalMetadataEmPNS1_10CachedSizeE
+  params:
+  - name: metadata
+    type: const google::protobuf::internal::InternalMetadata &
+  - name: size
+    type: int
+  - name: cached_size
+    type: google::protobuf::internal::CachedSize *
+  return_type: int
+  signature: int google::protobuf::internal::ComputeUnknownFieldsSize(const google::protobuf::internal::InternalMetadata &,
+    int, google::protobuf::internal::CachedSize *)
+- name: _ZN6bloaty16CustomDataSource9MergeFromERKS0_
+  params:
+  - name: from
+    type: const bloaty::CustomDataSource &
+  return_type: void
+  signature: void bloaty::CustomDataSource::MergeFrom(const bloaty::CustomDataSource &)
+- name: _ZN6google8protobuf8internal20RepeatedPtrFieldBase17MergeFromInternalERKS2_MS2_FvPPvS6_iiE
+  params:
+  - name: other
+    type: const google::protobuf::internal::RepeatedPtrFieldBase &
+  - name: inner_loop
+    type: void (google::protobuf::internal::RepeatedPtrFieldBase::*)(void **, void **, int, int)
+  return_type: void
+  signature: void google::protobuf::internal::RepeatedPtrFieldBase::MergeFromInternal(const google::protobuf::internal::RepeatedPtrFieldBase
+    &, void (google::protobuf::internal::RepeatedPtrFieldBase::*)(void **, void **, int, int))
+- name: _ZN6google8protobuf16RepeatedPtrFieldIN6bloaty5RegexEE5ClearEv
+  params: []
+  return_type: void
+  signature: void bloaty::Regex::Clear()
+- name: _ZNK6google8protobuf8internal9ArenaImpl14SpaceAllocatedEv
+  params: []
+  return_type: google::protobuf::uint64
+  signature: google::protobuf::uint64 google::protobuf::internal::ArenaImpl::SpaceAllocated() const
+- name: _ZN6google8protobuf8internal18GenericTypeHandlerIN6bloaty5RegexEE6DeleteEPS4_PNS0_5ArenaE
+  params: []
+  return_type: void
+  signature: void google::protobuf::UnknownField::Delete()
+- name: _ZN6bloaty7Options9MergeFromERKN6google8protobuf7MessageE
+  params:
+  - name: from
+    type: const ::google::protobuf::Message &
+  return_type: void
+  signature: void bloaty::Options::MergeFrom(const ::google::protobuf::Message &)
+- name: _ZNK6bloaty7Options13SetCachedSizeEi
+  params:
+  - name: size
+    type: int
+  return_type: void
+  signature: void bloaty::Options::SetCachedSize(int) const
+- name: _ZN6bloaty7Options9MergeFromERKS0_
+  params:
+  - name: from
+    type: const bloaty::Options &
+  return_type: void
+  signature: void bloaty::Options::MergeFrom(const bloaty::Options &)
+- name: _ZN6google8protobuf16RepeatedPtrFieldINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE9MergeFromERKS8_
+  params:
+  - name: from
+    type: const bloaty::Regex &
+  return_type: void
+  signature: void bloaty::Regex::MergeFrom(const bloaty::Regex &)
+- name: _ZN6google8protobuf16RepeatedPtrFieldIN6bloaty16CustomDataSourceEE9MergeFromERKS4_
+  params:
+  - name: from
+    type: const bloaty::Regex &
+  return_type: void
+  signature: void bloaty::Regex::MergeFrom(const bloaty::Regex &)
+- name: _ZN6bloaty7Options34_internal_set_disassemble_functionERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+  params:
+  - name: value
+    type: const std::string &
+  return_type: void
+  signature: void bloaty::Options::_internal_set_disassemble_function(const std::string &)
+- name: _ZN6bloaty7Options27_internal_set_source_filterERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+  params:
+  - name: value
+    type: const std::string &
+  return_type: void
+  signature: void bloaty::Options::_internal_set_source_filter(const std::string &)
+- name: _ZNK6google8protobuf16RepeatedPtrFieldINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE3GetEi
+  params:
+  - name: number
+    type: int
+  - name: set
+    type: const google::protobuf::internal::ExtensionSet &
+  - name: index
+    type: int
+  return_type: google::protobuf::internal::RepeatedMessageTypeTraits::ConstType
+  signature: google::protobuf::internal::RepeatedMessageTypeTraits::ConstType google::protobuf::internal::RepeatedMessageTypeTraits::Get(int,
+    const google::protobuf::internal::ExtensionSet &, int)
+- name: _ZN6google8protobuf15UnknownFieldSet9AddVarintEim
+  params:
+  - name: number
+    type: int
+  - name: value
+    type: google::protobuf::uint64
+  return_type: void
+  signature: void google::protobuf::UnknownFieldSet::AddVarint(int, google::protobuf::uint64)
+- name: _ZN6google8protobuf16RepeatedPtrFieldINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEE5ClearEv
+  params: []
+  return_type: void
+  signature: void bloaty::Regex::Clear()
+- name: _ZN6google8protobuf16RepeatedPtrFieldIN6bloaty16CustomDataSourceEE5ClearEv
+  params: []
+  return_type: void
+  signature: void bloaty::Regex::Clear()
+- name: _ZN6bloaty7Options17RegisterArenaDtorEPN6google8protobuf5ArenaE
+  params:
+  - name: arg0
+    type: ::google::protobuf::Arena *
+  return_type: void
+  signature: void bloaty::Options::RegisterArenaDtor(::google::protobuf::Arena *)
+- name: _ZN6google8protobuf8internal18GenericTypeHandlerIN6bloaty16CustomDataSourceEE6DeleteEPS4_PNS0_5ArenaE
+  params: []
+  return_type: void
+  signature: void google::protobuf::UnknownField::Delete()
+- name: _ZNK6bloaty8RangeMap5Entry15IsShortFallbackEv
+  params: []
+  return_type: bool
+  signature: bool bloaty::RangeMap::Entry::IsShortFallback() const
+- name: _ZNK6bloaty8RangeMap5Entry16HasFallbackLabelEv
+  params: []
+  return_type: bool
+  signature: bool bloaty::RangeMap::Entry::HasFallbackLabel() const
+- name: _ZN6bloaty8RangeMap23AddRangeWithTranslationEmmRKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKS0_bPS0_
+  params:
+  - name: addr
+    type: uint64_t
+  - name: size
+    type: uint64_t
+  - name: val
+    type: const std::string &
+  - name: translator
+    type: const bloaty::RangeMap &
+  - name: verbose
+    type: bool
+  - name: other
+    type: bloaty::RangeMap *
+  return_type: bool
+  signature: bool bloaty::RangeMap::AddRangeWithTranslation(uint64_t, uint64_t, const std::string &, const bloaty::RangeMap
+    &, bool, bloaty::RangeMap *)
+- name: _ZNK6bloaty8RangeMap10TryGetSizeEmPm
+  params:
+  - name: addr
+    type: uint64_t
+  - name: size
+    type: uint64_t *
+  return_type: bool
+  signature: bool bloaty::RangeMap::TryGetSize(uint64_t, uint64_t *) const
+- name: _ZN6bloaty12_GLOBAL__N_114ReadELFSymbolsERKNS_9InputFileEPNS_9RangeSinkEPNS_11SymbolTableEb
+  params:
+  - name: file
+    type: const bloaty::InputFile &
+  - name: sink
+    type: bloaty::RangeSink *
+  - name: table
+    type: bloaty::SymbolTable *
+  - name: disassemble
+    type: bool
+  return_type: void
+  signature: void bloaty::ReadELFSymbols(const bloaty::InputFile &, bloaty::RangeSink *, bloaty::SymbolTable *, bool)
+- name: _ZN6bloaty9RangeSink12AddFileRangeEPKcSt17basic_string_viewIcSt11char_traitsIcEES6_
+  params:
+  - name: analyzer
+    type: const char *
+  - name: name
+    type: int
+  - name: file_range
+    type: int
+  return_type: void
+  signature: void bloaty::RangeSink::AddFileRange(const char *, int, int)
+- name: _ZN6bloaty12_GLOBAL__N_115ReadELFSegmentsEPNS_9RangeSinkE
+  params:
+  - name: sink
+    type: bloaty::RangeSink *
+  return_type: void
+  signature: void bloaty::ReadELFSegments(bloaty::RangeSink *)
+- name: _ZN6bloaty12_GLOBAL__N_117DoReadELFSectionsEPNS_9RangeSinkENS0_16ReportSectionsByE
+  params:
+  - name: sink
+    type: bloaty::RangeSink *
+  - name: report_by
+    type: enum ReportSectionsBy
+  return_type: void
+  signature: void bloaty::DoReadELFSections(bloaty::RangeSink *, enum ReportSectionsBy)
+- name: _ZNK6bloaty9RangeSink7optionsEv
+  params: []
+  return_type: const bloaty::Options &
+  signature: const bloaty::Options & bloaty::RangeSink::options() const
+- name: _ZNK6bloaty9RangeSink10MapAtIndexEm
+  params:
+  - name: index
+    type: int
+  return_type: const bloaty::DualMap &
+  signature: const bloaty::DualMap & bloaty::RangeSink::MapAtIndex(int) const
+- name: _ZN6bloaty21ReadDWARFCompileUnitsERKNS_5dwarf4FileERKNS_7DualMapEPNS_9RangeSinkE
+  params:
+  - name: file
+    type: const dwarf::File &
+  - name: map
+    type: const bloaty::DualMap &
+  - name: sink
+    type: bloaty::RangeSink *
+  return_type: void
+  signature: void bloaty::ReadDWARFCompileUnits(const dwarf::File &, const bloaty::DualMap &, bloaty::RangeSink *)
+- name: _ZN6bloaty12_GLOBAL__N_111AddCatchAllEPNS_9RangeSinkE
+  params:
+  - name: sink
+    type: bloaty::RangeSink *
+  return_type: void
+  signature: void bloaty::AddCatchAll(bloaty::RangeSink *)
+- name: _ZNK6bloaty9RangeSink9IsBaseMapEv
+  params: []
+  return_type: bool
+  signature: bool bloaty::RangeSink::IsBaseMap() const
+- name: _ZN6bloaty12_GLOBAL__N_117DoReadELFSegmentsEPNS_9RangeSinkENS0_16ReportSegmentsByE
+  params:
+  - name: sink
+    type: bloaty::RangeSink *
+  - name: report_by
+    type: bloaty::(anonymous namespace)::ReportSegmentsBy
+  return_type: void
+  signature: void bloaty::DoReadELFSegments(bloaty::RangeSink *, bloaty::(anonymous namespace)::ReportSegmentsBy)
+- name: _ZNK6bloaty5dwarf14LineInfoReader8lineinfoEv
+  params: []
+  return_type: const bloaty::dwarf::LineInfoReader::LineInfo &
+  signature: const bloaty::dwarf::LineInfoReader::LineInfo & bloaty::dwarf::LineInfoReader::lineinfo() const
+- name: _ZNK6bloaty5dwarf2CU19IsValidDwarfAddressEm
+  params:
+  - name: addr
+    type: uint64_t
+  return_type: bool
+  signature: bool bloaty::dwarf::CU::IsValidDwarfAddress(uint64_t) const
+- name: _ZN6bloatyL22ReadDWARFStmtListRangeERKNS_5dwarf2CUEmPNS_9RangeSinkE
+  params:
+  - name: cu
+    type: const dwarf::CU &
+  - name: offset
+    type: uint64_t
+  - name: sink
+    type: bloaty::RangeSink *
+  return_type: void
+  signature: void bloaty::ReadDWARFStmtListRange(const dwarf::CU &, uint64_t, bloaty::RangeSink *)
+- name: _ZN6bloaty5dwarf13AddressRanges4dataEv
+  params: []
+  return_type: int
+  signature: int bloaty::dwarf::AddressRanges::data()
+- name: _ZNK6bloaty5dwarf13AddressRanges12address_sizeEv
+  params: []
+  return_type: uint8_t
+  signature: uint8_t bloaty::dwarf::AddressRanges::address_size() const
+- name: _ZN6bloaty5dwarf13AddressRanges7addressEv
+  params: []
+  return_type: uint64_t
+  signature: uint64_t bloaty::dwarf::AddressRanges::address()
+- name: _ZN6bloaty5dwarf13AddressRanges17debug_info_offsetEv
+  params: []
+  return_type: uint64_t
+  signature: uint64_t bloaty::dwarf::AddressRanges::debug_info_offset()
+- name: _ZN6bloaty16ReadDWARFInlinesERKNS_5dwarf4FileEPNS_9RangeSinkEb
+  params:
+  - name: file
+    type: const dwarf::File &
+  - name: sink
+    type: bloaty::RangeSink *
+  - name: include_line
+    type: bool
+  return_type: void
+  signature: void bloaty::ReadDWARFInlines(const dwarf::File &, bloaty::RangeSink *, bool)
+- name: _ZN6bloatyL17ReadDWARFPubNamesERNS_5dwarf10InfoReaderESt17basic_string_viewIcSt11char_traitsIcEEPNS_9RangeSinkE
+  params:
+  - name: reader
+    type: dwarf::InfoReader &
+  - name: section
+    type: int
+  - name: sink
+    type: bloaty::RangeSink *
+  return_type: void
+  signature: void bloaty::ReadDWARFPubNames(dwarf::InfoReader &, int, bloaty::RangeSink *)
+- name: _ZN6bloatyL18ReadDWARFDebugInfoERNS_5dwarf10InfoReaderENS1_7SectionERKNS_7DualMapEPNS_9RangeSinkE
+  params:
+  - name: reader
+    type: dwarf::InfoReader &
+  - name: section
+    type: dwarf::InfoReader::Section
+  - name: symbol_map
+    type: const bloaty::DualMap &
+  - name: sink
+    type: bloaty::RangeSink *
+  return_type: void
+  signature: void bloaty::ReadDWARFDebugInfo(dwarf::InfoReader &, dwarf::InfoReader::Section, const bloaty::DualMap &, bloaty::RangeSink
+    *)
+- name: _ZN6bloaty21ReadDWARFCompileUnitsERKNS_5dwarf4FileERKNS_7DualMapEPKNS0_2CUEPNS_9RangeSinkE
+  params:
+  - name: file
+    type: const dwarf::File &
+  - name: map
+    type: const bloaty::DualMap &
+  - name: skeleton
+    type: const dwarf::CU *
+  - name: sink
+    type: bloaty::RangeSink *
+  return_type: void
+  signature: void bloaty::ReadDWARFCompileUnits(const dwarf::File &, const bloaty::DualMap &, const dwarf::CU *, bloaty::RangeSink
+    *)
+- name: _ZN6bloaty6AddDIEERKNS_5dwarf2CUERKNS_10GeneralDIEERKNS_7DualMapEPNS_9RangeSinkE
+  params:
+  - name: cu
+    type: const dwarf::CU &
+  - name: die
+    type: const bloaty::GeneralDIE &
+  - name: symbol_map
+    type: const bloaty::DualMap &
+  - name: sink
+    type: bloaty::RangeSink *
+  return_type: void
+  signature: void bloaty::AddDIE(const dwarf::CU &, const bloaty::GeneralDIE &, const bloaty::DualMap &, bloaty::RangeSink
+    *)
+- name: _ZN6bloaty13TryReadPcPairERKNS_5dwarf2CUERKNS_10GeneralDIEEPNS_9RangeSinkE
+  params:
+  - name: cu
+    type: const dwarf::CU &
+  - name: die
+    type: const bloaty::GeneralDIE &
+  - name: sink
+    type: bloaty::RangeSink *
+  return_type: uint64_t
+  signature: uint64_t bloaty::TryReadPcPair(const dwarf::CU &, const bloaty::GeneralDIE &, bloaty::RangeSink *)
+- name: _ZN6bloaty5dwarf19ReadIndirectAddressERKNS0_2CUEm
+  params:
+  - name: cu
+    type: const bloaty::dwarf::CU &
+  - name: val
+    type: uint64_t
+  return_type: uint64_t
+  signature: uint64_t bloaty::dwarf::ReadIndirectAddress(const bloaty::dwarf::CU &, uint64_t)
+- name: _ZN6bloaty5dwarf13ReadRangeListERKNS0_2CUEmSt17basic_string_viewIcSt11char_traitsIcEEPNS_9RangeSinkEPS7_
+  params:
+  - name: cu
+    type: const bloaty::dwarf::CU &
+  - name: low_pc
+    type: uint64_t
+  - name: name
+    type: int
+  - name: sink
+    type: bloaty::RangeSink *
+  - name: data
+    type: int *
+  return_type: void
+  signature: void bloaty::dwarf::ReadRangeList(const bloaty::dwarf::CU &, uint64_t, int, bloaty::RangeSink *, int *)
+- name: _ZN6bloatyL22ReadDWARFAddressRangesERKNS_5dwarf4FileEPNS_9RangeSinkE
+  params:
+  - name: file
+    type: const dwarf::File &
+  - name: sink
+    type: bloaty::RangeSink *
+  return_type: bool
+  signature: bool bloaty::ReadDWARFAddressRanges(const dwarf::File &, bloaty::RangeSink *)
+- name: _ZN6bloaty5dwarf13AddressRanges8NextUnitEv
+  params: []
+  return_type: bool
+  signature: bool bloaty::dwarf::AddressRanges::NextUnit()
+- name: _ZN6bloaty5dwarf13AddressRanges9NextRangeEv
+  params: []
+  return_type: bool
+  signature: bool bloaty::dwarf::AddressRanges::NextRange()
+- name: _ZN6bloaty5dwarf4File14GetFieldByNameESt17basic_string_viewIcSt11char_traitsIcEE
+  params:
+  - name: name
+    type: int
+  return_type: int *
+  signature: int * bloaty::dwarf::File::GetFieldByName(int)
+- name: _ZN6bloaty5dwarf9DIEReader12SkipChildrenERKNS0_2CUEPKNS0_11AbbrevTable6AbbrevE
+  params:
+  - name: cu
+    type: const bloaty::dwarf::CU &
+  - name: code
+    type: const AbbrevTable::Abbrev *
+  return_type: void
+  signature: void bloaty::dwarf::DIEReader::SkipChildren(const bloaty::dwarf::CU &, const AbbrevTable::Abbrev *)
+- name: _ZN6bloaty5dwarf9DIEReader15SkipNullEntriesEv
+  params: []
+  return_type: void
+  signature: void bloaty::dwarf::DIEReader::SkipNullEntries()
+- name: _ZN6bloaty5dwarf9DIEReader8ReadCodeERKNS0_2CUE
+  params:
+  - name: cu
+    type: const bloaty::dwarf::CU &
+  return_type: const AbbrevTable::Abbrev *
+  signature: const AbbrevTable::Abbrev * bloaty::dwarf::DIEReader::ReadCode(const bloaty::dwarf::CU &)
+- name: _ZN6bloaty5dwarf2CU10ReadHeaderESt17basic_string_viewIcSt11char_traitsIcEES5_NS0_10InfoReader7SectionERS6_
+  params:
+  - name: entire_unit
+    type: int
+  - name: data
+    type: int
+  - name: section
+    type: InfoReader::Section
+  - name: reader
+    type: bloaty::dwarf::InfoReader &
+  return_type: void
+  signature: void bloaty::dwarf::CU::ReadHeader(int, int, InfoReader::Section, bloaty::dwarf::InfoReader &)
+- name: _ZN6bloaty5dwarf6CUIter6NextCUERNS0_10InfoReaderEPNS0_2CUE
+  params:
+  - name: reader
+    type: bloaty::dwarf::InfoReader &
+  - name: cu
+    type: bloaty::dwarf::CU *
+  return_type: bool
+  signature: bool bloaty::dwarf::CUIter::NextCU(bloaty::dwarf::InfoReader &, bloaty::dwarf::CU *)
+- name: _ZN6bloaty5dwarf10InfoReader9GetCUIterENS1_7SectionEm
+  params:
+  - name: section
+    type: bloaty::dwarf::InfoReader::Section
+  - name: offset
+    type: uint64_t
+  return_type: bloaty::dwarf::CUIter
+  signature: bloaty::dwarf::CUIter bloaty::dwarf::InfoReader::GetCUIter(bloaty::dwarf::InfoReader::Section, uint64_t)
+- name: _ZN6bloaty5dwarf9AttrValue25ResolveIndirectLineStringERKNS0_2CUEm
+  params:
+  - name: cu
+    type: const bloaty::dwarf::CU &
+  - name: ofs
+    type: uint64_t
+  return_type: int
+  signature: int bloaty::dwarf::AttrValue::ResolveIndirectLineString(const bloaty::dwarf::CU &, uint64_t)
+- name: _ZN6bloaty5dwarf9AttrValue21ResolveIndirectStringERKNS0_2CUEm
+  params:
+  - name: cu
+    type: const bloaty::dwarf::CU &
+  - name: ofs
+    type: uint64_t
+  return_type: int
+  signature: int bloaty::dwarf::AttrValue::ResolveIndirectString(const bloaty::dwarf::CU &, uint64_t)
+- name: _ZN6bloaty5dwarf14LineInfoReader12ReadLineInfoEv
+  params: []
+  return_type: bool
+  signature: bool bloaty::dwarf::LineInfoReader::ReadLineInfo()
+- name: _ZN6bloaty5dwarf14LineInfoReader20SpecialOpcodeAdvanceEh
+  params:
+  - name: op
+    type: uint8_t
+  return_type: void
+  signature: void bloaty::dwarf::LineInfoReader::SpecialOpcodeAdvance(uint8_t)
+- name: _ZN6bloaty5dwarf14LineInfoReader12SeekToOffsetEmh
+  params:
+  - name: offset
+    type: uint64_t
+  - name: address_size
+    type: uint8_t
+  return_type: void
+  signature: void bloaty::dwarf::LineInfoReader::SeekToOffset(uint64_t, uint8_t)
+- name: _ZN6bloaty5dwarf14LineInfoReader19GetExpandedFilenameB5cxx11Em
+  params:
+  - name: index
+    type: int
+  return_type: const std::string &
+  signature: const std::string & bloaty::dwarf::LineInfoReader::GetExpandedFilename(int)
+language: c++
+project: bloaty
+target_name: fuzz_target
+target_path: /src/bloaty/tests/fuzz_target.cc

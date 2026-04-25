@@ -438,6 +438,12 @@ class GPT4oMini(GPT):
   name = 'gpt-4o-mini'
 
 
+class GPT5Mini(GPT):
+  """OpenAI's GPT-5-mini model."""
+
+  name = 'gpt-5-mini'
+
+
 class GPT4Turbo(GPT):
   """OpenAI's GPT-4 Turbo model."""
 
