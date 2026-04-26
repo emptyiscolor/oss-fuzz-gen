@@ -236,6 +236,11 @@ class GPT(LLM):
 
   name = 'gpt-3.5-turbo'
 
+  @property
+  def _api_model_name(self) -> str:
+    """Model/deployment name used in API calls."""
+    return self.name
+
   def get_model(self) -> Any:
     """Returns the underlying model instance."""
     # Placeholder: No suitable implementation/usage yet.
@@ -330,7 +335,7 @@ class GPT(LLM):
 
     completion = self.with_retry_on_error(
         lambda: client.chat.completions.create(messages=self.messages,
-                                               model=self.name,
+                                               model=self._api_model_name,
                                                n=self.num_samples,
                                                temperature=self.temperature),
         [openai.OpenAIError])
@@ -354,7 +359,7 @@ class GPT(LLM):
 
     result = self.with_retry_on_error(
         lambda: client.responses.create(
-            model=self.name, input=self.messages, tools=tools),
+            model=self._api_model_name, input=self.messages, tools=tools),
         [openai.OpenAIError])
     return result
 
@@ -370,7 +375,7 @@ class GPT(LLM):
 
     completion = self.with_retry_on_error(
         lambda: client.chat.completions.create(messages=prompt.get(),
-                                               model=self.name,
+                                               model=self._api_model_name,
                                                n=self.num_samples,
                                                temperature=self.temperature),
         [openai.OpenAIError])
@@ -389,7 +394,7 @@ class GPT(LLM):
 
     completion = self.with_retry_on_error(
         lambda: client.chat.completions.create(messages=prompt.get(),
-                                               model=self.name,
+                                               model=self._api_model_name,
                                                n=self.num_samples,
                                                temperature=self.temperature),
         [openai.OpenAIError])
@@ -480,7 +485,7 @@ class ChatGPT(GPT):
     completion = self.with_retry_on_error(
         lambda: client.chat.completions.create(
             messages=self.conversation_history,
-            model=self.name,
+            model=self._api_model_name,
             n=self.num_samples,
             temperature=self.temperature), [openai.OpenAIError])
 
@@ -524,6 +529,11 @@ class AzureGPT(GPT):
 
   name = 'gpt-3.5-turbo-azure'
 
+  @property
+  def _api_model_name(self) -> str:
+    """Azure deployment name (strips '-azure' suffix)."""
+    return self.name.replace('-azure', '')
+
   def _get_tiktoken_encoding(self, model_name: str):
     """Returns the tiktoken encoding for the model."""
     return super()._get_tiktoken_encoding(model_name.replace('-azure', ''))
@@ -547,6 +557,12 @@ class AzureGPT4o(AzureGPT):
   """Azure's GPTi-4 model."""
 
   name = 'gpt-4o-azure'
+
+
+class AzureGPT54Mini(AzureGPT):
+  """Azure's GPT-5.4-mini model."""
+
+  name = 'gpt-5.4-mini-azure'
 
 
 class Claude(LLM):
