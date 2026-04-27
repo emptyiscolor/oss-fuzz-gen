@@ -46,7 +46,7 @@ from results import BenchmarkResult, Result, TrialResult
 # NUM_EVA controls the number of fuzz targets to evaluate in parallel by each
 # experiment, while {run_all_experiments.NUM_EXP, default 2} experiments will
 # run in parallel.
-NUM_EVA = int(os.getenv('LLM_NUM_EVA', '3'))
+NUM_EVA = int(os.getenv('LLM_NUM_EVA', '1'))
 
 # Default LLM hyper-parameters.
 # #182 shows Gemini returns NUM_SAMPLES independent responses via repeated
@@ -56,7 +56,7 @@ NUM_EVA = int(os.getenv('LLM_NUM_EVA', '3'))
 # WARN: Avoid large NUM_SAMPLES in highly parallelized local experiments.
 # It controls the number of LLM responses per prompt, which may exceed your
 # LLM's limit on query-per-second.
-NUM_SAMPLES = 2
+NUM_SAMPLES = 1
 MAX_TOKENS: int = 4096
 RUN_TIMEOUT: int = 30
 TEMPERATURE: float = 0.4

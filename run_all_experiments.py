@@ -41,7 +41,7 @@ logger = logging.getLogger(__name__)
 # NUM_EXP controls the number of experiments in parallel, while each experiment
 # will evaluate {run_one_experiment.NUM_EVA, default 3} fuzz targets in
 # parallel.
-NUM_EXP = int(os.getenv('LLM_NUM_EXP', '2'))
+NUM_EXP = int(os.getenv('LLM_NUM_EXP', '6'))
 
 # Default LLM hyper-parameters.
 MAX_TOKENS: int = run_one_experiment.MAX_TOKENS
